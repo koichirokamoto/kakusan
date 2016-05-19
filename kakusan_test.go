@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"os"
 	"testing"
+	"strings"
 )
 
 func TestConvertHankakuToZenkaku(t *testing.T) {
@@ -12,7 +13,7 @@ func TestConvertHankakuToZenkaku(t *testing.T) {
 	go ConvertHankakuToZenkaku(nameChan, hankaku)
 	result := <-nameChan
 
-	stringAssert(t, result, "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨワヲン")
+	stringAssert(t, result, "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨワヲンァィゥェォャュョッ")
 }
 
 func TestConvertHankakuToZenkaku2(t *testing.T) {
@@ -76,7 +77,7 @@ func readHankakuFromFile(fileName string) string {
 }
 
 func stringAssert(t *testing.T, s1, s2 string) {
-	if s1 != s2 {
+	if strings.EqualFold(s1, s2) == false {
 		t.Errorf("expected is %s\nbut was %s", s2, s1)
 		t.Fail()
 	} else {

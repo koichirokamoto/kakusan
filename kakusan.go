@@ -1,7 +1,6 @@
 package kakusan
 
 import "unicode"
-import "strings"
 
 var (
 	hankakuToZenkaku = map[string]string{
@@ -98,22 +97,22 @@ var (
 func ConvertHankakuToZenkaku(nameChan chan string, name string) {
 	var preview, now, result string
 	for _, c := range name {
-		if unicode.In(c, unicode.Katakana) || strings.EqualFold(string(c), "ﾞ") || strings.EqualFold(string(c), "ﾟ") {
-			if strings.EqualFold(string(c), "ﾞ") {
+		if unicode.In(c, unicode.Katakana) || string(c) == "ﾞ" || string(c) == "ﾟ" {
+			if string(c) == "ﾞ" {
 				now = dakuten[preview]
 				preview = ""
-			} else if strings.EqualFold(string(c), "ﾟ") {
+			} else if string(c) == "ﾟ" {
 				now = handakuten[preview]
 				preview = ""
-			} else if strings.EqualFold(hankakuToZenkaku[string(c)], "") == false {
-				if strings.EqualFold(dakuten[string(c)], "") == false || strings.EqualFold(handakuten[string(c)], "") == false {
-					if strings.EqualFold(preview, "") == false {
+			} else if hankakuToZenkaku[string(c)] != "" {
+				if dakuten[string(c)] != "" || handakuten[string(c)] != "" {
+					if preview != "" {
 						result += string(hankakuToZenkaku[preview])
 					}
 					preview = string(c)
 					continue
 				}
-				if strings.EqualFold(preview, "") == false {
+				if preview != "" {
 					now = hankakuToZenkaku[preview]
 					preview = ""
 				}
@@ -127,7 +126,7 @@ func ConvertHankakuToZenkaku(nameChan chan string, name string) {
 			result += string(c)
 		}
 	}
-	if strings.EqualFold(preview, "") == false {
+	if preview != "" {
 		result += hankakuToZenkaku[preview]
 	}
 	nameChan <- result
